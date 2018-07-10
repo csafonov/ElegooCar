@@ -224,40 +224,6 @@ void CCarCtrl::CarCtrlMan()
   }
   
   CarCtrl.MotionManager();
-  /*
- if (InfraRed.GetIrCommand() )
- {
-  if (bEnaTx & 0x1) Serial.println(InfraRed.IrResult()   ,HEX);
-  InfraRed.Resume();
-  if (InfraRed.IrResult() !=0xFFFFFFFF)
-  {
-    InfraRed.Ir_value = InfraRed.IrResult();
-    InfraRed.LockManager();
   
-   CarCtrl.MotionManager();
-  }
-  CarCtrl.preMillis = millis();// time now
-  
-  if (CarCtrl.middleDistance <= 20 && InfraRed.Ir_value == IREM_KEY_up )
-  {
-    Motor.stop();
-  }
-  delay(150);//150 ms, if shorter - on continue press stops
- }
- else
- {
-   // timeout
-   if(millis() - CarCtrl.preMillis > 100  )
-   {
-      Motor.stop();
-      CarCtrl.preMillis = millis();
-      if (Motor.in_motion)
-      if (bEnaTx & 0x1) Serial.println("Timeout-ST");
-    }
- }
-*/
-
-
-
 }
 
