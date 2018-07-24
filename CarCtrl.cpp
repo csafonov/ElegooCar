@@ -68,7 +68,7 @@ void CCarCtrl::init()
      bDebugIr=1;
      bDebugTrace=0;
      bDebugUs=0;
-     bDebugCar=1;
+     bDebugCar=0;//1;
      bNoTrace = 1;
 
     LineTracking.RML = 15;
@@ -153,6 +153,8 @@ void CCarCtrl::CarCtrlMan()
   int Timeout;
   int RML;
   int middleDistance;
+  char sCmd;
+  bool bNewCmdBT;
    CarCtrl.MyTimers.UpdateGlobalTime();
 
 
@@ -186,7 +188,7 @@ void CCarCtrl::CarCtrlMan()
 
    if (CarCtrl.LineTracking.L||CarCtrl.LineTracking.M||CarCtrl.LineTracking.R )
    {
-    if (bDebugCar) Serial.println("line detected");
+    if (bDebugCar) Serial.println("LINE");
     if (!CarCtrl.bNoTrace)
     {
       CarCtrl.LineTracking.TriggerLine = 1;// triggered line
@@ -221,6 +223,43 @@ void CCarCtrl::CarCtrlMan()
         CarCtrl.MyTimers.SetNextTime(MY_TIMER_MOTORS_CMD_TIMEOUT,Timeout);
         CarCtrl.usecLastIrCmd = millis();// time now
      }
+  }
+  stat = BTremote.GetBTCommand();// check if was a new command by bluetooth
+  if (stat)
+  {
+    
+    sCmd = BTremote.cmd();
+    BTremote.ClearCommand();
+              Serial.println(sCmd   ,DEC);
+bNewCmdBT=0;
+    switch (sCmd)
+    {
+      case '$':
+      ///unlock
+         break;
+      case 'f':bNewCmdBT=1;
+       InfraRed.Ir_value=IREM_KEY_up;break;
+      case 'b':bNewCmdBT=1;
+       InfraRed.Ir_value=IREM_KEY_dn;break;
+      case 'l':bNewCmdBT=1;
+       InfraRed.Ir_value=IREM_KEY_left;break;
+      case 'r':bNewCmdBT=1;
+       InfraRed.Ir_value=IREM_KEY_right;break;
+    }
+    if (bNewCmdBT)
+    {
+          InfraRed.LockManager();
+          CarCtrl.bHasNewIrCmd=1;
+          CarCtrl.MyTimers.SetNextTime(MY_TIMER_IR,100);
+        if ( InfraRed.Ir_value == IREM_KEY_left ||  InfraRed.Ir_value == IREM_KEY_right)
+            Timeout=30;
+        else
+            Timeout=150;
+
+          CarCtrl.MyTimers.SetNextTime(MY_TIMER_MOTORS_CMD_TIMEOUT,Timeout);
+          CarCtrl.usecLastIrCmd = millis();// time now
+    }
+          
   }
   
   CarCtrl.MotionManager();

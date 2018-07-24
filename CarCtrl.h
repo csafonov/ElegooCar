@@ -41,6 +41,30 @@ class CMyTimers
     void UpdateGlobalTime();// update GlobalTime timer each cylce 
 };
 
+class CBTremote
+{
+  private:
+   char NewCmd;
+  public:
+  void ClearCommand() {  NewCmd=0; };
+  char cmd() { return NewCmd;}
+  int GetBTCommand()
+  {
+    char c = Serial.read();
+    if (c>0)
+    {
+      NewCmd = c;
+      return 1;
+    }
+    return 0;
+  }
+  CBTremote()
+  {
+    NewCmd=0;
+  }
+};
+
+
 class CCarCtrl
 {
   private:
@@ -66,6 +90,7 @@ class CCarCtrl
 
   public:
       class CMyTimers MyTimers;
+      class CBTremote BTremote;
 };
 
 extern class CCarCtrl CarCtrl;
