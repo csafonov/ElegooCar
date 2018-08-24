@@ -43,10 +43,10 @@ void CInfraRed::InitLockState()
   LockState.loc_state = LOCK_STATE_OFF;// initial state
   LockState.AlgMode = ALG_MODE_NOTHING;
   LockState.keyseq[0] = IREM_KEY_number;// init the key sequence for unlock
-  LockState.keyseq[1] = IREM_KEY_2;
+  LockState.keyseq[1] = IREM_KEY_0;//IREM_KEY_2;
   LockState.keyseq[2] = IREM_KEY_0;// init the key sequence for unlock
-  LockState.keyseq[3] = IREM_KEY_1;
-  LockState.keyseq[4] = IREM_KEY_1;
+  LockState.keyseq[3] = IREM_KEY_0;//IREM_KEY_1;
+  LockState.keyseq[4] = IREM_KEY_0;//IREM_KEY_1;
   LockState.keyseq[5] = 0;
   LockState.keyseq[6] = IREM_KEY_ok;
   LockState.lock_ind = 0;
@@ -90,7 +90,7 @@ void CInfraRed::LockManager()
           {
             switch (Ir_value)
             {
-              case IREM_KEY_1:
+              case IREM_KEY_0://IREM_KEY_1:
                 LockState.AlgMode = ALG_MODE_DIRECT;
                 LockState.lock_ind++;
                 break;
@@ -141,6 +141,11 @@ void CInfraRed::LockManager()
        
     if (Ir_value == IREM_KEY_0)
        CarCtrl.bNoTrace  = 0;
+
+    if (Ir_value == IREM_KEY_9)
+      CarCtrl.HeadServo.IncTarget(-HEAD_STEP);
+    if (Ir_value == IREM_KEY_7)
+      CarCtrl.HeadServo.IncTarget(HEAD_STEP);   
 
       if ( LockState.lock_ind==0 && Ir_value != IREM_KEY_star)
         break; // do nothing with lock/unlock, perform control

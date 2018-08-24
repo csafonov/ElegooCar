@@ -72,7 +72,7 @@ void CCarCtrl::init()
      bNoTrace = 1;
 
     LineTracking.RML = 15;
-    myservo.attach(3);  // attach servo on pin 3 to servo object
+    HeadServo.init();
     InfraRed.init();
     Motor.init();
     UltraSonicSen.init();
@@ -81,9 +81,8 @@ void CCarCtrl::init()
 }
 /// Called when unlocked
 void CCarCtrl::StartMicroServo()
-{
-          myservo.write(90);  //setservo position according to scaled value
-          delay(500); 
+{   HeadServo.InitTaget(90);
+    HeadServo.Go();
 }
 
 void CCarCtrl::MotionManager()
@@ -142,7 +141,7 @@ void CCarCtrl::MotionManager()
           break;
       default: break;
     }
-
+HeadServo.Go();
 
 
 }
@@ -245,6 +244,13 @@ bNewCmdBT=0;
        InfraRed.Ir_value=IREM_KEY_left;break;
       case 'r':bNewCmdBT=1;
        InfraRed.Ir_value=IREM_KEY_right;break;
+      case '<':
+       InfraRed.Ir_value=IREM_KEY_7;
+       CarCtrl.HeadServo.IncTarget(HEAD_STEP);break;
+      case '>':
+       InfraRed.Ir_value=IREM_KEY_9;
+       CarCtrl.HeadServo.IncTarget(-HEAD_STEP);break;
+       
     }
     if (bNewCmdBT)
     {

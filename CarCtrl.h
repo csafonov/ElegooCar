@@ -64,13 +64,39 @@ class CBTremote
   }
 };
 
-
-class CCarCtrl
+#define HEAD_STEP 10
+/// Micro servo for US moving
+class CHeadServo
 {
   private:
     class Servo myservo;      // create servo object to control servo
-    
+  private:
+    short degMyServoTarget;
   public:
+    void IncTarget(short dx)
+    {  degMyServoTarget += dx;// x>0:CCW
+       degMyServoTarget = degMyServoTarget % 360;
+    }
+    void InitTaget(short x)
+    {  degMyServoTarget =  x;}
+    void Go()
+    {
+          myservo.write(degMyServoTarget);  //setservo position according to scaled value
+          delay(500); 
+    }
+    void init()
+    {
+      InitTaget(90);
+      myservo.attach(3);  // attach servo on pin 3 to servo object
+      degMyServoTarget = 90;
+
+    }
+};
+
+class CCarCtrl
+{
+  public:
+    class CHeadServo HeadServo;
     class CLineTracking LineTracking;
     void init();
     void MotionManager();
