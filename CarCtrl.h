@@ -27,7 +27,8 @@ enum EMyTimers
 {
   MY_TIMER_IR    = 0, // IR remote control
   MY_TIMER_MOTORS_CMD_TIMEOUT= 1,// motors drive
-  MY_ULTRA_SONIC = 2// ultra-sonic distance measurement
+  MY_ULTRA_SONIC = 2,// ultra-sonic distance measurement
+  MY_MICR_SERVO  =3 // micro-servo for US head
 };
 class CMyTimers
 {
@@ -82,7 +83,7 @@ class CHeadServo
     void Go()
     {
           myservo.write(degMyServoTarget);  //setservo position according to scaled value
-          delay(500); 
+
     }
     void init()
     {

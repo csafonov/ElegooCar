@@ -34,8 +34,8 @@ enum ERemoteKeys
       IREM_KEY_dn =0xFFA857
 };
 
-#define keyseq_LEN  7
-#define key_mode_IND 5
+#define keyseq_LEN  3 //7
+#define key_mode_IND (keyseq_LEN-2) // last before final 'Ok'
 #define lock_seq_LEN 3
 struct CLockState
 {

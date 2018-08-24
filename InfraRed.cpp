@@ -42,6 +42,7 @@ void CInfraRed::InitLockState()
 {
   LockState.loc_state = LOCK_STATE_OFF;// initial state
   LockState.AlgMode = ALG_MODE_NOTHING;
+  /** len=7
   LockState.keyseq[0] = IREM_KEY_number;// init the key sequence for unlock
   LockState.keyseq[1] = IREM_KEY_0;//IREM_KEY_2;
   LockState.keyseq[2] = IREM_KEY_0;// init the key sequence for unlock
@@ -49,6 +50,12 @@ void CInfraRed::InitLockState()
   LockState.keyseq[4] = IREM_KEY_0;//IREM_KEY_1;
   LockState.keyseq[5] = 0;
   LockState.keyseq[6] = IREM_KEY_ok;
+  */
+  LockState.keyseq[0] = IREM_KEY_number;// init the key sequence for unlock
+  LockState.keyseq[1] = 0;// here wait for '0'
+  LockState.keyseq[2] = IREM_KEY_ok;// init the key sequence for unlock
+
+ 
   LockState.lock_ind = 0;
   LockState.lockseq[0]=IREM_KEY_star;
   LockState.lockseq[1]=IREM_KEY_0;

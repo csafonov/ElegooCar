@@ -83,6 +83,7 @@ void CCarCtrl::init()
 void CCarCtrl::StartMicroServo()
 {   HeadServo.InitTaget(90);
     HeadServo.Go();
+    delay(500); 
 }
 
 void CCarCtrl::MotionManager()
@@ -141,8 +142,12 @@ void CCarCtrl::MotionManager()
           break;
       default: break;
     }
-HeadServo.Go();
 
+    if ( CarCtrl.MyTimers.IsTimeout(MY_MICR_SERVO) )
+    {
+        HeadServo.Go();
+        CarCtrl.MyTimers.SetNextTime(MY_MICR_SERVO,100);
+    }
 
 }
 
