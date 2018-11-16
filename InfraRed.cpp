@@ -51,16 +51,27 @@ void CInfraRed::InitLockState()
   LockState.keyseq[5] = 0;
   LockState.keyseq[6] = IREM_KEY_ok;
   */
+#if USED_IR_CONTROL_DEVICE==IR_CONTROL_DEVICE_ARD
+  // unlock password: #,0,Ok
   LockState.keyseq[0] = IREM_KEY_number;// init the key sequence for unlock
   LockState.keyseq[1] = 0;// here wait for '0'
   LockState.keyseq[2] = IREM_KEY_ok;// init the key sequence for unlock
-
- 
+  // lock password: *,0,*
   LockState.lock_ind = 0;
   LockState.lockseq[0]=IREM_KEY_star;
   LockState.lockseq[1]=IREM_KEY_0;
   LockState.lockseq[2]=IREM_KEY_star;
-  
+  #elif USED_IR_CONTROL_DEVICE==IR_CONTROL_DEVICE_LG_MP3
+  // unlock password: POWER,0,key_Stop_small
+  LockState.keyseq[0] = key_Power;// init the key sequence for unlock
+  LockState.keyseq[1] = 0;// here wait for '0'
+  LockState.keyseq[2] = key_Stop_small;// init the key sequence for unlock
+  // lock password: Mute,0,Mute
+  LockState.lock_ind = 0;
+  LockState.lockseq[0]=key_Mute;
+  LockState.lockseq[1]=IREM_KEY_0;
+  LockState.lockseq[2]=key_Mute;
+  #endif
   LedOff();
 }
 

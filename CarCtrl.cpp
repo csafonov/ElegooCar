@@ -212,7 +212,7 @@ void CCarCtrl::CarCtrlMan()
         Serial.print("IR =");
         Serial.println(InfraRed.IrResult()   ,HEX);
        }
-       if (InfraRed.IrResult() !=0xFFFFFFFF)
+       if (InfraRed.IrResult() != key_PressedRepeat)
         {
           InfraRed.Ir_value = InfraRed.IrResult();
           InfraRed.LockManager();
