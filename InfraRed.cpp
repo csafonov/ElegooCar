@@ -83,7 +83,23 @@ void CInfraRed::InitLockState()
 /// *,0,* and the LED is OFF.
 void CInfraRed::LockManager()
 {
+
+ // BEEPERS
+ //  if (Ir_value == key_Volume_UP)
+ //      CarCtrl.MyBeeper.TurnOn(1,900,1000);
+ //  if (Ir_value == key_Volume_DN)
+ //      CarCtrl.MyBeeper.TurnOn(0,900,1000);
  
+// LEDS
+   if (Ir_value == key_Volume_UP)
+       CarCtrl.MyLED1.TurnOn(1,200,0);
+   if (Ir_value == key_Volume_DN)
+       CarCtrl.MyLED1.TurnOn(0,200,0);
+    if (Ir_value == key_Preset_UP)
+       CarCtrl.MyLED2.TurnOn(1,200,0);
+   if (Ir_value == key_Preset_DN)
+       CarCtrl.MyLED2.TurnOn(0,200,0);
+       
   switch (LockState.loc_state)
   {
     case LOCK_STATE_OFF://0
@@ -164,6 +180,9 @@ void CInfraRed::LockManager()
       CarCtrl.HeadServo.IncTarget(-HEAD_STEP);
     if (Ir_value == IREM_KEY_7)
       CarCtrl.HeadServo.IncTarget(HEAD_STEP);   
+
+
+
 
       if ( LockState.lock_ind==0 && Ir_value != IREM_KEY_star)
         break; // do nothing with lock/unlock, perform control

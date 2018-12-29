@@ -76,8 +76,18 @@ void CCarCtrl::init()
     InfraRed.init();
     Motor.init();
     UltraSonicSen.init();
-    CarCtrl.MyTimers.init();
-    CarCtrl.MyTimers.SetNextTime(MY_TIMER_IR,100);
+    MyTimers.init();
+    MyTimers.SetNextTime(MY_TIMER_IR,100);
+
+    MyBeeper.init(A0,MY_TIMER_BEEPER,MY_TIMER_BEEP_INTERVAL,&MyTimers);
+   // MyBeeper.TurnOn(1,900,500);
+    
+    MyLED1.init(A1,MY_TIMER_LED1,MY_TIMER_LED1_INTERVAL,&MyTimers);
+   // MyLED1.TurnOn(2,300,0);
+    
+    MyLED2.init(A2,MY_TIMER_LED2,MY_TIMER_LED2_INTERVAL,&MyTimers);
+  //  MyLED2.TurnOn(2,300,0);
+
 }
 /// Called when unlocked
 void CCarCtrl::StartMicroServo()
@@ -88,6 +98,17 @@ void CCarCtrl::StartMicroServo()
 
 void CCarCtrl::MotionManager()
 {
+   if (CarCtrl.middleDistance < MIN_US_DISTANCE_CM)
+  {
+    if (CarCtrl.MyBeeper.IsOn()==false)
+        CarCtrl.MyBeeper.TurnOn(1,200,200);
+  }
+  else
+  {
+    if (CarCtrl.MyBeeper.IsOn()==true)
+        CarCtrl.MyBeeper.TurnOn(0,200,200);
+  }
+  
   if (InfraRed.LockState.loc_state==LOCK_STATE_OFF)
   {
     Motor.KillMotor();
@@ -125,6 +146,8 @@ void CCarCtrl::MotionManager()
             InfraRed.Ir_value =IREM_KEY_ok;//stop
             CarCtrl.usecLastIrCmd = millis();
     }
+
+ 
     
      switch(InfraRed.Ir_value)
      {
@@ -133,10 +156,14 @@ void CCarCtrl::MotionManager()
       {
         Motor.forward();
       }
-      break;
+         break;
       case IREM_KEY_dn: Motor.back(); break;
-      case IREM_KEY_left: Motor.left_freewheel(); break;
-      case IREM_KEY_right: Motor.right_freewheel();break;
+      case IREM_KEY_left:
+      Motor.left_freewheel();
+      break;
+      case IREM_KEY_right:
+      Motor.right_freewheel();
+      break;
       case IREM_KEY_ok:
       Motor.stop(); 
           break;
@@ -151,6 +178,7 @@ void CCarCtrl::MotionManager()
 
 }
 
+short beepVal;
 void CCarCtrl::CarCtrlMan()
 {
   int stat;
@@ -274,6 +302,9 @@ bNewCmdBT=0;
   }
   
   CarCtrl.MotionManager();
-  
+  /// beeper
+  MyBeeper.process();
+  MyLED1.processLED();
+  MyLED2.processLED();
 }
 

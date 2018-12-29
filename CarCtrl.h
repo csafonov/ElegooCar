@@ -22,13 +22,19 @@ class CLineTracking
  };
 
 /// Support for timing
-#define MY_TIMERS_NUM   4 // number of controlled objects
+#define MY_TIMERS_NUM   10 // number of controlled objects
 enum EMyTimers
 {
   MY_TIMER_IR    = 0, // IR remote control
   MY_TIMER_MOTORS_CMD_TIMEOUT= 1,// motors drive
   MY_ULTRA_SONIC = 2,// ultra-sonic distance measurement
-  MY_MICR_SERVO  =3 // micro-servo for US head
+  MY_MICR_SERVO  =3, // micro-servo for US head
+  MY_TIMER_BEEPER = 4, // for beeper implementation
+  MY_TIMER_BEEP_INTERVAL = 5,
+  MY_TIMER_LED1 = 6, // for beeper implementation
+  MY_TIMER_LED1_INTERVAL = 7,
+  MY_TIMER_LED2 = 8, // for beeper implementation
+  MY_TIMER_LED2_INTERVAL = 9
 };
 class CMyTimers
 {
@@ -41,6 +47,122 @@ class CMyTimers
     bool IsTimeout(int n);// check if it is timeout now
     void UpdateGlobalTime();// update GlobalTime timer each cylce 
 };
+
+class CMyBeeper
+{
+  private:
+    short TimerId_per;
+    short TimerId_int;
+    short beepVal;
+    short msPeriod;
+    short bEna;
+    short msInterval;
+    bool bOn;
+    char pin;
+    class CMyTimers *pMyTimers;
+  public:
+  bool IsOn()
+  {
+    return bEna ? true:false;
+  }
+  void TurnOn(short _bEna,short _msInterval,float _Hz)
+  {
+    bEna=_bEna;
+    //beepVal = HIGH;
+    msInterval=_msInterval;
+    setFreq(  _Hz);
+    //bOn=false;//true;
+    pMyTimers->SetNextTime(TimerId_int,0);// start immediately
+  }
+  void setFreq(float Hz)
+  {
+    if (Hz==0)
+      msPeriod=0;
+      else
+      {
+     msPeriod =(short)( 1000.0f/Hz);
+     if (msPeriod < 1)
+         msPeriod = 1;
+      }
+  }
+  void init (char _pin,short _TimerId_per,short _TimerId_int,class CMyTimers *_pMyTimers)
+  {
+    TimerId_per=_TimerId_per;
+    TimerId_int= _TimerId_int;
+
+    pin=_pin;
+     pinMode(pin,OUTPUT);//pin 14
+     digitalWrite(pin, LOW);
+     setFreq(50);
+     bEna=0;
+     msInterval = 0;
+     pMyTimers = _pMyTimers;
+  }
+  void process()
+  {
+    if (msInterval)
+    {
+      if (pMyTimers->IsTimeout(TimerId_int))
+      {
+        pMyTimers->SetNextTime(TimerId_int,msInterval);
+        if (bEna==1)
+        {
+          bOn =( bOn==true) ? false:true;
+          pMyTimers->SetNextTime(TimerId_per,msPeriod);
+          beepVal = ( bOn==true) ? HIGH : LOW ;
+        }
+        else
+        {
+          bOn =false;
+          
+          if (bEna==0)
+          {
+            beepVal=LOW;
+          }
+          else
+          if (bEna==2)
+          {
+             beepVal = (beepVal==HIGH) ? LOW:HIGH;
+          }
+        }
+        digitalWrite(pin, beepVal);
+      }
+    }
+
+    if (bOn)
+    {
+      if (pMyTimers->IsTimeout(TimerId_per))
+      {
+        beepVal = (beepVal==HIGH) ? LOW:HIGH;// 50% duty
+        digitalWrite(pin, beepVal);
+        pMyTimers->SetNextTime(TimerId_per,msPeriod);
+      }
+    }
+        
+  }
+
+  void processLED()
+  {
+    if (msInterval)
+    {
+      if (pMyTimers->IsTimeout(TimerId_int))
+      {
+        pMyTimers->SetNextTime(TimerId_int,msInterval);
+        if (bEna)
+        {
+          bOn =( bOn==true) ? false:true;
+          beepVal = ( bOn==true) ? HIGH : LOW ;
+        }
+        else
+        {
+          bOn =false;
+          beepVal = LOW;
+        }
+        digitalWrite(pin, beepVal);
+      }
+    }
+  } // processLED
+};//class
 
 class CBTremote
 {
@@ -118,6 +240,9 @@ class CCarCtrl
   public:
       class CMyTimers MyTimers;
       class CBTremote BTremote;
+      class CMyBeeper MyBeeper;
+      class CMyBeeper MyLED1;
+      class CMyBeeper MyLED2;
 };
 
 extern class CCarCtrl CarCtrl;

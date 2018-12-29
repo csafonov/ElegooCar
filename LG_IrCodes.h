@@ -8,7 +8,7 @@ enum ERemoteKeys // EIrCodes_LG_MP3
 {
 key_PressedRepeat=0x4AB0F7B6,
 key_Power=	0x08087887, 
-key_PresetUP=	0x0808C837,
+key_Preset_UP=	0x0808C837,
 key_Preset_DN=	0x080848B7,
 key_Mute=		0x0808F807,
 key_Volume_UP=	0x0808E817,
