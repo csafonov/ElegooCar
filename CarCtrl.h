@@ -48,6 +48,43 @@ class CMyTimers
     void UpdateGlobalTime();// update GlobalTime timer each cylce 
 };
 
+class CMyPIR
+{
+  private:
+    char pin;
+    bool LastLogicalState;
+    short LastAnalogState;
+    public:
+    bool bDebug;
+    void init(char _pin)
+    {
+      pin = _pin;
+      pinMode(pin,INPUT);
+    }
+    bool ReadLogicalState()
+    {
+      LastLogicalState = digitalRead(pin)==HIGH ? true:false;
+      return LastLogicalState;
+    }
+    short ReadAnlogState()
+    {
+      LastAnalogState = analogRead(pin);
+      return LastAnalogState;
+    }
+    void process()
+    {
+      short Prev  = LastLogicalState;
+      ReadLogicalState();
+      if (LastLogicalState != Prev)
+      {
+         if (bDebug) Serial.println(LastLogicalState);
+
+
+       
+      }
+    }
+};
+
 class CMyBeeper
 {
   private:
@@ -74,6 +111,11 @@ class CMyBeeper
     //bOn=false;//true;
     pMyTimers->SetNextTime(TimerId_int,0);// start immediately
   }
+  void TurnOn(bool _bOn)
+  {
+    digitalWrite(pin,_bOn==true? HIGH:LOW);
+  }
+  
   void setFreq(float Hz)
   {
     if (Hz==0)
@@ -243,6 +285,7 @@ class CCarCtrl
       class CMyBeeper MyBeeper;
       class CMyBeeper MyLED1;
       class CMyBeeper MyLED2;
+      class CMyPIR    MyPIR;
 };
 
 extern class CCarCtrl CarCtrl;

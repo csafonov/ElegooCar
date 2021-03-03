@@ -87,6 +87,7 @@ void CCarCtrl::init()
     
     MyLED2.init(A2,MY_TIMER_LED2,MY_TIMER_LED2_INTERVAL,&MyTimers);
   //  MyLED2.TurnOn(2,300,0);
+    MyPIR.init(A3); MyPIR.bDebug=true;
 
 }
 /// Called when unlocked
@@ -304,7 +305,18 @@ bNewCmdBT=0;
   CarCtrl.MotionManager();
   /// beeper
   MyBeeper.process();
-  MyLED1.processLED();
-  MyLED2.processLED();
+  //MyLED1.processLED();
+  //MyLED2.processLED();
+  MyPIR.process();
+             if (MyPIR.ReadLogicalState() == true)
+             {
+                 CarCtrl.MyLED1.TurnOn(true);
+                 CarCtrl.MyLED2.TurnOn(true);
+             }
+             else
+             {
+                 CarCtrl.MyLED1.TurnOn(false);
+                 CarCtrl.MyLED2.TurnOn(false);
+             }
 }
 
